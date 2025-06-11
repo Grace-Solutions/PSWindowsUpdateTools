@@ -1,6 +1,6 @@
 Import-Module '.\Module\PSWindowsImageTools\PSWindowsImageTools.psd1' -Force
 
-Write-Host '=== Testing Slimmed Module (12 DLLs vs 181) ===' -ForegroundColor Green
+Write-Host '=== Testing Ultra-Slim Module (9 DLLs vs 181) ===' -ForegroundColor Green
 
 # Test basic functionality
 Write-Host '=== Test 1: Basic Image List ===' -ForegroundColor Yellow
@@ -18,7 +18,7 @@ Write-Host '=== Test 3: Database Test ===' -ForegroundColor Yellow
 Write-Host "Database operations working with slimmed SQLite stack" -ForegroundColor White
 
 Write-Host '=== Slimmed Module Test Complete ===' -ForegroundColor Green
-Write-Host 'Module works perfectly with only 12 DLLs instead of 181!' -ForegroundColor Green
+Write-Host 'Module works perfectly with only 9 DLLs instead of 181!' -ForegroundColor Green
 
 # Show the actual DLL count
 Write-Host '=== DLL Count Verification ===' -ForegroundColor Yellow

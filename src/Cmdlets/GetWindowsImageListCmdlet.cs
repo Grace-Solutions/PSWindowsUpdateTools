@@ -259,17 +259,7 @@ namespace PSWindowsImageTools.Cmdlets
                 LoggingService.LogOperationComplete(this, "GetImageList", duration, 
                     $"Processed {imageInfoList.Count} images from {ImagePath.FullName}");
 
-                // Show output object structure for debugging
-                if (imageInfoList.Count > 0)
-                {
-                    LoggingService.WriteVerbose(this, "OutputStructure", $"Returning {imageInfoList.Count} WindowsImageInfo objects");
-                    LoggingService.WriteVerbose(this, "OutputStructure", $"Sample object structure: Index={imageInfoList[0].Index}, Name='{imageInfoList[0].Name}', Edition='{imageInfoList[0].Edition}', Architecture='{imageInfoList[0].Architecture}', Size={imageInfoList[0].Size}");
-                    if (imageInfoList[0].AdvancedInfo != null)
-                    {
-                        var advanced = imageInfoList[0].AdvancedInfo;
-                        LoggingService.WriteVerbose(this, "OutputStructure", $"AdvancedInfo available: Features={advanced.InstalledFeatures.Count}, Packages={advanced.InstalledPackages.Count}, Drivers={advanced.InstalledDrivers.Count}");
-                    }
-                }
+
 
                 // Output results
                 WriteObject(imageInfoList.ToArray());

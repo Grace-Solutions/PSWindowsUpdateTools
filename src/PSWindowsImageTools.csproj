@@ -21,6 +21,10 @@
     <UseWPF>false</UseWPF>
     <Nullable>enable</Nullable>
     <SQLiteNetStandardRuntime>true</SQLiteNetStandardRuntime>
+    <!-- Exclude debug and configuration files from output -->
+    <DebugType>none</DebugType>
+    <GenerateRuntimeConfigurationFiles>false</GenerateRuntimeConfigurationFiles>
+    <GenerateDependencyFile>false</GenerateDependencyFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -63,17 +67,22 @@
       <!-- Remove PowerShell assemblies that should be provided by host -->
       <PowerShellAssembliesToDelete Include="$(OutputPath)System.Management.Automation.dll" />
       <PowerShellAssembliesToDelete Include="$(OutputPath)Microsoft.PowerShell.*.dll" />
-      <!-- Remove .NET runtime assemblies -->
-      <SystemAssembliesToDelete Include="$(OutputPath)System.*.dll" />
+      <!-- Remove .NET runtime assemblies (but keep SQLite) -->
+      <SystemAssembliesToDelete Include="$(OutputPath)System.*.dll" Exclude="$(OutputPath)System.Data.SQLite.dll;$(OutputPath)System.Data.SQLite.EF6.dll" />
       <SystemAssembliesToDelete Include="$(OutputPath)Microsoft.Win32.*.dll" />
       <SystemAssembliesToDelete Include="$(OutputPath)Microsoft.CSharp.dll" />
       <SystemAssembliesToDelete Include="$(OutputPath)Microsoft.VisualBasic.*.dll" />
+      <!-- Remove debug and configuration files -->
+      <ConfigFilesToDelete Include="$(OutputPath)*.pdb" />
+      <ConfigFilesToDelete Include="$(OutputPath)*.deps.json" />
+      <ConfigFilesToDelete Include="$(OutputPath)*.runtimeconfig.json" />
     </ItemGroup>
 
     <Delete Files="@(RefFolderToDelete)" />
     <Delete Files="@(RuntimeFolderToDelete)" />
     <Delete Files="@(PowerShellAssembliesToDelete)" />
     <Delete Files="@(SystemAssembliesToDelete)" />
+    <Delete Files="@(ConfigFilesToDelete)" />
     <RemoveDir Directories="$(OutputPath)ref" />
     <RemoveDir Directories="$(OutputPath)runtimes" />
 
