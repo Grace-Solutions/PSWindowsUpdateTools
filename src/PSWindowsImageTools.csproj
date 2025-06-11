@@ -12,7 +12,11 @@
     <Copyright>Copyright © 2025</Copyright>
     <OutputPath>..\Artifacts\bin\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- Only copy dependencies that aren't provided by PowerShell host -->
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!-- Exclude reference assemblies and runtime folders -->
+    <CopyLocalRuntimeTargetAssets>false</CopyLocalRuntimeTargetAssets>
+    <ExcludeAssets>build;buildMultitargeting;buildTransitive;analyzers</ExcludeAssets>
     <UseWindowsForms>false</UseWindowsForms>
     <UseWPF>false</UseWPF>
     <Nullable>enable</Nullable>
@@ -20,12 +24,27 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.0" />
-    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+    <!-- PowerShell dependencies - provided by host, don't copy -->
+    <PackageReference Include="Microsoft.PowerShell.SDK" Version="7.4.0">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+
+    <PackageReference Include="PowerShellStandard.Library" Version="5.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+
+    <!-- Required dependencies - these will be copied -->
     <PackageReference Include="Microsoft.Dism" Version="3.3.12" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
+
+    <!-- System crypto is included in .NET 6 runtime, mark as provided -->
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1">
+      <PrivateAssets>all</PrivateAssets>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
@@ -33,5 +52,32 @@
     <Folder Include="Services\" />
     <Folder Include="Models\" />
   </ItemGroup>
+
+  <!-- Custom target to clean up unwanted files after build -->
+  <Target Name="CleanupBinFolder" AfterTargets="Build">
+    <ItemGroup>
+      <!-- Remove reference assemblies folder -->
+      <RefFolderToDelete Include="$(OutputPath)ref\**\*" />
+      <!-- Remove runtime folders -->
+      <RuntimeFolderToDelete Include="$(OutputPath)runtimes\**\*" />
+      <!-- Remove PowerShell assemblies that should be provided by host -->
+      <PowerShellAssembliesToDelete Include="$(OutputPath)System.Management.Automation.dll" />
+      <PowerShellAssembliesToDelete Include="$(OutputPath)Microsoft.PowerShell.*.dll" />
+      <!-- Remove .NET runtime assemblies -->
+      <SystemAssembliesToDelete Include="$(OutputPath)System.*.dll" />
+      <SystemAssembliesToDelete Include="$(OutputPath)Microsoft.Win32.*.dll" />
+      <SystemAssembliesToDelete Include="$(OutputPath)Microsoft.CSharp.dll" />
+      <SystemAssembliesToDelete Include="$(OutputPath)Microsoft.VisualBasic.*.dll" />
+    </ItemGroup>
+
+    <Delete Files="@(RefFolderToDelete)" />
+    <Delete Files="@(RuntimeFolderToDelete)" />
+    <Delete Files="@(PowerShellAssembliesToDelete)" />
+    <Delete Files="@(SystemAssembliesToDelete)" />
+    <RemoveDir Directories="$(OutputPath)ref" />
+    <RemoveDir Directories="$(OutputPath)runtimes" />
+
+    <Message Text="Cleaned up bin folder - removed reference assemblies and runtime folders" Importance="high" />
+  </Target>
 
 </Project>

@@ -23,6 +23,9 @@ bld/
 [Ll]og/
 [Ll]ogs/
 
+# Exception: Include the PowerShell module's bin folder with optimized DLLs
+!Module/PSWindowsImageTools/bin/
+
 # .NET Core
 project.lock.json
 project.fragment.lock.json
