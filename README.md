@@ -20,12 +20,21 @@ Import-Module PSWindowsImageTools
 # Get image information
 $images = Get-WindowsImageList -ImagePath "C:\Images\install.wim"
 
-# Create a customization recipe
-New-WindowsImageBuildRecipe -OutputPath "C:\Recipes\custom.json" -IncludeDefaults
+# Create a customization recipe object
+$recipe = New-WindowsImageBuildRecipe -Name "My Recipe" -IncludeDefaults
+
+# Modify the recipe as needed
+$recipe.Metadata.Description = "Custom Windows 11 build"
+$recipe.RemoveAppxPackages.Patterns.Add("*Microsoft.Teams*")
+
+# Export recipe to JSON file
+Export-WindowsImageBuildRecipe -Recipe $recipe -OutputPath "C:\Recipes\custom.json" -Indent
+
+# Import recipe from JSON file
+$importedRecipe = Import-WindowsImageBuildRecipe -Path "C:\Recipes\custom.json"
 
 # Apply customizations
-$recipe = Get-Content "C:\Recipes\custom.json" | ConvertFrom-Json
-New-WindowsImageBuild -InputObject $images[0] -Recipe $recipe
+New-WindowsImageBuild -InputObject $images[0] -Recipe $importedRecipe
 ```
 
 ## Requirements

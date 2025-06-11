@@ -45,6 +45,8 @@
         'Dismount-WindowsImageList',
         'Convert-ESDToWindowsImage',
         'New-WindowsImageBuildRecipe',
+        'Export-WindowsImageBuildRecipe',
+        'Import-WindowsImageBuildRecipe',
         'New-WindowsImageBuild',
         'Search-WindowsImageUpdateCatalog',
         'Invoke-WindowsImageDatabaseQuery'
